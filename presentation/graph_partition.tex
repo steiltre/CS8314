@@ -4,6 +4,7 @@
 %
 
 \documentclass{beamer}
+\usetheme{Boadilla}
 
 \title{Multilevel $k$-way Partitioning Scheme for Irregular Graphs}
 \subtitle{G. Karypis and V. Kumar}
@@ -12,16 +13,16 @@
 
 \mode<presentation>{}
 
-\usepackage{amsmath}
-\usepackage{amsthm}
-\usepackage{amssymb}
-\usepackage{esint}
-\usepackage{enumitem}
-\usepackage{algorithm}
-\usepackage{algorithmicx}
-\usepackage{algpseudocode}
-\usepackage{bbm}
-\usepackage{xcolor}
+%\usepackage{amsmath}
+%\usepackage{amsthm}
+%\usepackage{amssymb}
+%\usepackage{esint}
+%\usepackage{enumitem}
+%\usepackage{algorithm}
+%\usepackage{algorithmicx}
+%\usepackage{algpseudocode}
+%\usepackage{bbm}
+%\usepackage{xcolor}
 
 %\newtheorem{theorem}{Theorem}[section]
 %\newtheorem{corollary}{Corollary}[section]
@@ -60,12 +61,98 @@
 \end{frame}
 
 \begin{frame}
+  \frametitle{Table of Contents}
   \tableofcontents
 \end{frame}
 
-\section{Motivation}
+\section{Introduction}
 \begin{frame}
+  \frametitle{Graph Partitioning}
+
+  Given a graph $G = (V, E)$ with $|V|=n$, we want to partition $V$ into subsets $V_1, \dots, V_k$ such that
+  \begin{itemize}
+    \item $V_i \cap V_j = \emptyset$ for $i \neq j$
+    \item $\cup_{i=1}^k V_i = V$
+    \item $|V_i| = \frac{n}{k}$ for all $i$ (approximately at least)
+    \item number of edges with vertices in different subsets is minimized
+  \end{itemize}
 \end{frame}
+
+\begin{frame}
+  \frametitle{Uses of Graph Partitioning}
+
+  \begin{itemize}
+    \item Assigning tasks to processors in parallel computation to minimize communication costs
+    \item Sparse matrix-vector multiplication
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Recursive Bisection}
+
+  Can repeatedly partition graph in two
+  \begin{itemize}
+    \item Recursive Bisection
+    \item Recursive nature leads to logarithmic term in running time ($O(|E| \log k)$)
+  \end{itemize}
+
+  Partitioning graph in two is still difficult to do.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Multilevel k-Way Partitioning}
+
+  \begin{block}{Idea:}
+    It is easier to partition smaller graphs
+  \end{block}
+
+  Instead of trying to partition original graph, try reducing to a smaller graph.
+
+\end{frame}
+
+\section{Algorithm}
+
+\begin{frame}
+  \frametitle{Basic Algorithm Steps}
+
+  \begin{enumerate}
+    \item
+      Successively coarsen graph
+    \item
+      Partition coarsest graph
+    \item
+      Refine graph and partition to original graph
+  \end{enumerate}
+
+  INSERT PICTURE FROM PAPER!!!!!!!!!!!!!!!!!!!
+
+\end{frame}
+
+\subsection{Coarsening}
+
+\begin{frame}
+  \frametitle{Coarsening Phase}
+
+  Let $G_0 = (V_0, E_0) = (V,E)$ be the original graph. Want a sequence $G_i = (V_i, E_i)$ with $|V_i| < |V_{i-1}|$.
+
+  Need to add weights to vertices and edges to keep track of number of original vertices and edges are in each coarsened vertex and edge.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Use of Matchings}
+
+  Can rephrase coarsening as finding a matching and collapsing along edges of matching.
+
+  GIVE EXAMPLE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Heavy Edge Matching}
+\end{frame}
+
 \end{document}
 
 

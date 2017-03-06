@@ -1,2 +1,4 @@
 \beamer@endinputifotherversion {3.36pt}
-\beamer@sectionintoc {1}{Motivation}{3}{0}{1}
+\beamer@sectionintoc {1}{Introduction}{3}{0}{1}
+\beamer@sectionintoc {2}{Algorithm}{7}{0}{2}
+\beamer@subsectionintoc {2}{1}{Coarsening}{8}{0}{2}
