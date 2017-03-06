@@ -122,14 +122,14 @@
     \item
       Partition coarsest graph
     \item
-      Refine graph and partition to original graph
+      Uncoarsen graph and refine partition
   \end{enumerate}
 
   INSERT PICTURE FROM PAPER!!!!!!!!!!!!!!!!!!!
 
 \end{frame}
 
-\subsection{Coarsening}
+\subsection{Coarsening Phase}
 
 \begin{frame}
   \frametitle{Coarsening Phase}
@@ -145,12 +145,88 @@
 
   Can rephrase coarsening as finding a matching and collapsing along edges of matching.
 
+  Matchings are often done using randomized algorithm.
+  \begin{itemize}
+    \item Vertices visited in random order
+    \item At each vertex, a random unmatched neighbor is chosen (if any exist)
+    \item Corresponding edge is added to matching
+  \end{itemize}
+
   GIVE EXAMPLE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 \end{frame}
 
 \begin{frame}
   \frametitle{Heavy Edge Matching}
+
+  Each coarsening step, reduces the total weight of edges by the weights of edges in the matching.
+  \begin{itemize}
+    \item To minimize edge cut, choose edges that maximize weight of matching
+  \end{itemize}
+
+  Algorithm:
+  \begin{itemize}
+    \item Visit vertices in random order
+    \item At each vertex, choose unmatched neighbor along heaviest edge
+    \item Add corresponding edge to matching
+  \end{itemize}
+
+  Has same computational complexity as randomized matching ($O(|E|)$)
+\end{frame}
+
+\subsection{Initial Partitioning}
+
+\begin{frame}
+  \frametitle{Initial Partitioning}
+
+  Partition $G_n=(V_n,E_n)$ into $k$ subsets after several iterations using any method
+  \begin{itemize}
+    \item Can use recursive bisection, spectal bisection, etc.
+  \end{itemize}
+
+  Want to enforce
+  \begin{itemize}
+    \item Vertex weights are approximately equal among partitions
+  \end{itemize}
+
+\end{frame}
+
+\subsection{Uncoarsening Phase}
+
+\begin{frame}
+  \frametitle{Uncoarsening Phase}
+
+  Basic Steps:
+  \begin{itemize}
+    \item Take partitioning of $G_i$ to a partitioning of $G_{i-1}$ by reversing the matching and collapse of coarsening that sent $G_{i-1}$ to $G_i$.
+    \item Refine partition to have lower edge cut
+  \end{itemize}
+
+  Many refining algorithms exist, based on various heuristics.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Kernighan-Lin (KL) Algorithm}
+
+  Used for bisection (not $k$-way partitioning)
+
+  For a vertex $v$, let $gain(v)$ be the decrease in edge-cut when $v$ is moved to the other subset of the partition.
+
+  \begin{itemize}
+    \item Compute $gain$ of all vertices
+    \item Create priority queue for each subset of partition based on $gain$
+    \item Choose $v$ with highest $gain$
+      \begin{itemize}
+        \item Move $v$ to other subset
+        \item Update gain of neighbors of $v$
+        \item Store current edge-cut
+        \item Lock $v$ so it cannot be moved
+      \end{itemize}
+  \end{itemize}
+
+  Afterward, choose configuration that had lowest edge-cut
+
 \end{frame}
 
 \end{document}
