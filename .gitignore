@@ -11,3 +11,9 @@
 *.fdb_latexmk
 
 *.fls
+
+# ignore beamer files
+*.nav
+*.out
+*.toc
+*.vrb
