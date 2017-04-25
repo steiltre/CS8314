@@ -119,10 +119,37 @@ csr_mat * create_weight(
   /* Create sparse matrix assuming all pixels have 4 * radius^2 neighbors (overestimate, may want to fix later) */
   csr_mat * wgt = csr_alloc( image->height * image->width * 4 * radius * radius, image->height * image->width );
 
+  /* Need to calculate variances */
+  float avg_bright = 0;
+  float var_bright;
+  float avg_x = (image->width-1)/2;
+  float avg_y = (image->height-1)/2;
+  float var_space;
+
+  for (int i=0; i<image->height; i++) {
+    for (int j=0; j<image->width; j++) {
+      avg_bright += image->red[i*image->width + j];
+    }
+  }
+
+  avg_bright = avg_bright / (image->height * image->width);
+
+  for (int i=0; i<image->height; i++) {
+    for (int j=0; j<image->width; j++) {
+      var_bright += (image->red[i*image->width + j] - avg_bright) * (image->red[i*image->width + j] - avg_bright);
+      var_space += (i - avg_y) * (i - avg_y) + (j - avg_x) * (j - avg_x);
+    }
+  }
+
+  var_bright = var_bright / (image->height * image->width);
+  var_space = var_space / (image->height * image->width);
+
+
   int ind = 0;
 
   wgt->ptr[0] = 0;
 
+  /* Loop over all neighbors of all pixels and determine weight */
   for (int i=0; i<image->height; i++) {
     for (int j=0; j<image->width; j++) {
 
@@ -133,9 +160,15 @@ csr_mat * create_weight(
 
           float dist2 = (row-i)*(row-i) + (col-j)*(col-j);
 
-          if (dist2 < radius*radius && row>0 && row<image->height && col>0 && col<image->width) {
-            wgt->vals[ind] = exp( -1 * dist2 - ( brightness - image->red[row*image->width + col] ) * (brightness - image->red[row*image->width + col] ) );
-            wgt->cols[ind] = j;
+          if (dist2 <= radius*radius && row>=0 && row<image->height && col>=0 && col<image->width) {
+            if (row != i || col != j) {
+              wgt->vals[ind] = -1 * exp( -1 * dist2/var_space - ( brightness - image->red[row*image->width + col] ) * (brightness - image->red[row*image->width + col] )/var_bright );
+              //wgt->vals[ind] = -1 * exp( -1 * ( brightness - image->red[row*image->width + col] ) * (brightness - image->red[row*image->width + col] )/var_bright );
+            }
+            else {
+              wgt->vals[ind] = 1;
+            }
+            wgt->cols[ind] = row*image->width + col;
             ind++;
           }
         }
@@ -143,6 +176,32 @@ csr_mat * create_weight(
       wgt->ptr[i*image->width + j + 1] = ind;
     }
   }
+
+  wgt->nnz = ind;
+
+  float sum;
+  float norm;
+  /* Normalize so row sums are zero */
+  for (int k=0; k<image->height*image->width; k++) {
+
+    sum = 0;
+
+    /* loop over neighbors */
+    for (int nbr=wgt->ptr[k]; nbr < wgt->ptr[k+1]; nbr++) {
+      sum += wgt->vals[nbr];
+    }
+
+    sum -= 1;  /* Counted diagonal entry in sum */
+    norm = -1.0/sum;
+
+    for (int nbr=wgt->ptr[k]; nbr < wgt->ptr[k+1]; nbr++) {
+      if (wgt->cols[nbr] != k) {
+        wgt->vals[nbr] = wgt->vals[nbr] * norm;
+      }
+    }
+  }
+
+  return wgt;
 
 }
 

@@ -15,4 +15,6 @@ csr_mat * csr_alloc(
   csr->vals = malloc( max_nnz * sizeof(*(csr->vals)) );
 
   csr->nnz = 0;
+
+  return csr;
 }

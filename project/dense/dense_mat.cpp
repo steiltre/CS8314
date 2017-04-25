@@ -25,35 +25,17 @@ dense_mat * dense_mat_load(
   dense_mat * mat = (dense_mat*) malloc(sizeof(*mat));
 
   /* read matrix dimensions */
-  fscanf(fin, "%u", &(mat->nrows));
-  fscanf(fin, "%u", &(mat->ncols));
+  fscanf(fin, "%lu", &(mat->nrows));
+  fscanf(fin, "%lu", &(mat->ncols));
   fscanf(fin, "\n"); /* make sure we process the newline, too. */
 
-  mat->vals = (float*) malloc( mat->nrows * mat->ncols * sizeof(mat->vals));
+  mat->vals = (double*) malloc( mat->nrows * mat->ncols * sizeof(mat->vals));
 
   for(int i=0; i<mat->nrows*mat->ncols; i++) {
-    fscanf(fin, "%f", mat->vals + i);
+    fscanf(fin, "%lf", mat->vals + i);
   }
 
   return mat;
-}
-
-void dense_mat_write(
-    dense_mat * mat,
-    char const * const ofname)
-{
-  FILE * fout = fopen(ofname, "w");
-
-  fprintf(fout, "%i ", mat->nrows);
-  fprintf(fout, "%i\n", mat->ncols);
-
-  for(int i=0; i<mat->nrows; i++) {
-    for(int j=0; j<mat->ncols; j++) {
-      fprintf(fout, "%0.3f ", mat->vals[ i*mat->ncols + j]);
-    }
-    fprintf(fout, "\n");
-  }
-
 }
 
 void dense_mat_free(

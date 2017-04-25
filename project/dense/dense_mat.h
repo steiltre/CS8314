@@ -11,7 +11,7 @@ typedef struct
   int ncols;
 
   /** Values in matrix */
-  float *vals;
+  double *vals;
 } dense_mat;
 
 /**
@@ -23,17 +23,6 @@ typedef struct
  */
 dense_mat * dense_mat_load(
     char const * const ifname);
-
-/**
- * @brief Save matrix to file
- *
- * @param ofname The name of the file to save to.
- *
- * @return
- */
-void dense_mat_write(
-    dense_mat * mat,
-    char const * const ofname);
 
 /**
  * @brief Free all memory allocated by `dense_mat_load()`.
